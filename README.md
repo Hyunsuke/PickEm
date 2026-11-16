@@ -35,11 +35,11 @@ PickEm réunit deux choses :
 
 Chaque résultat de match, saisi sur la plateforme ou récupéré depuis [start.gg](https://www.start.gg), fait avancer l'arbre, résout les pronostics et met à jour les classements en temps réel.
 
-| Profil | Rôle |
-|---|---|
+| Profil         | Rôle                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Administrateur | Crée les jeux, les tournois, les imports start.gg, les pronostics et Pick'em ; valide les scores et tranche les litiges. |
-| Joueur | S'inscrit en solo ou en équipe, fait son check-in, déclare ses scores. |
-| Spectateur | Pronostique, répond aux Pick'em, suit les tournois en direct, rejoint des groupes d'amis. |
+| Joueur         | S'inscrit en solo ou en équipe, fait son check-in, déclare ses scores.                                                   |
+| Spectateur     | Pronostique, répond aux Pick'em, suit les tournois en direct, rejoint des groupes d'amis.                                |
 
 > Aucun jeu d'argent : les pronostics rapportent uniquement des points, des badges et des titres.
 
@@ -49,13 +49,13 @@ _À venir._
 
 ## Stack technique
 
-| Composant | Technologie | Statut |
-|---|---|---|
-| Web | [SvelteKit](https://svelte.dev/docs/kit) + TypeScript | Initialisé |
-| API | [Express](https://expressjs.com) + TypeScript | À venir |
-| Base de données & temps réel | [Cloud Firestore](https://firebase.google.com/docs/firestore) | À venir |
-| Authentification | [Firebase Authentication](https://firebase.google.com/docs/auth) | À venir |
-| Mobile | _à définir_ | À venir |
+| Composant                    | Technologie                                                      | Statut     |
+| ---------------------------- | ---------------------------------------------------------------- | ---------- |
+| Web                          | [SvelteKit](https://svelte.dev/docs/kit) + TypeScript            | Initialisé |
+| API                          | [Express](https://expressjs.com) + TypeScript                    | À venir    |
+| Base de données & temps réel | [Cloud Firestore](https://firebase.google.com/docs/firestore)    | À venir    |
+| Authentification             | [Firebase Authentication](https://firebase.google.com/docs/auth) | À venir    |
+| Mobile                       | _à définir_                                                      | À venir    |
 
 Les choix de stack sont justifiés dans les ADR (`docs/adr/`, à venir).
 
@@ -71,10 +71,10 @@ PickEm/
 
 ## Prérequis
 
-| Outil | Version | Utilité |
-|---|---|---|
-| [Node.js](https://nodejs.org) | 24 ou plus (voir `.nvmrc`) | Web et API |
-| npm | fourni avec Node | Gestion des dépendances |
+| Outil                         | Version                    | Utilité                 |
+| ----------------------------- | -------------------------- | ----------------------- |
+| [Node.js](https://nodejs.org) | 24 ou plus (voir `.nvmrc`) | Web et API              |
+| npm                           | fourni avec Node           | Gestion des dépendances |
 
 Un accès au projet Firebase de l'équipe est nécessaire (demander les identifiants à un membre du groupe).
 
@@ -84,12 +84,17 @@ Un accès au projet Firebase de l'équipe est nécessaire (demander les identifi
 git clone https://github.com/Hyunsuke/PickEm.git
 cd PickEm
 
+# Outils du dépôt (Prettier, hook pre-commit)
+npm install
+
 # Web
 cd frontend && npm install && cd ..
 
-# API (une fois le backend initialisé)
+# API
 cd backend && npm install && cd ..
 ```
+
+Le `npm install` à la racine active le hook **pre-commit** : à chaque commit, les fichiers modifiés sont formatés avec Prettier et tous les tests sont lancés. Si un test échoue, le commit est refusé.
 
 > Objectif : une installation en une seule commande avec données de démonstration et simulateur. _À venir._
 
@@ -107,25 +112,33 @@ cd frontend && npm run dev
 
 ## Tests
 
-_À venir._ Les tests se lanceront en une seule commande et passeront sans connexion (appels start.gg et Firebase simulés).
+Tous les tests se lancent en une seule commande, depuis la racine, et passent sans connexion (Firebase et start.gg simulés) :
 
 ```bash
-# Vérification des types du frontend (disponible dès maintenant)
-cd frontend && npm run check
+npm test
 ```
+
+| Commande                                            | Effet                                    |
+| --------------------------------------------------- | ---------------------------------------- |
+| `npm test` (racine)                                 | Tests du backend puis du frontend        |
+| `cd backend && npx vitest run tests/health.test.ts` | Un seul fichier de test                  |
+| `cd frontend && npm run check`                      | Vérification des types Svelte/TypeScript |
+| `npm run format` (racine)                           | Formate tout le dépôt avec Prettier      |
 
 ## Variables d'environnement
 
 Copier `.env.example` en `.env` dans chaque dossier concerné. Aucun secret (jeton start.gg, clé de compte de service Firebase…) ne doit être commité.
 
-| Variable | Où | Description |
-|---|---|---|
-| `PORT` | backend | Port de l'API (défaut `3000`) |
-| `FIREBASE_PROJECT_ID` | backend | Identifiant du projet Firebase |
-| `FIREBASE_CLIENT_EMAIL` | backend | E-mail du compte de service (Firebase Admin SDK) |
-| `FIREBASE_PRIVATE_KEY` | backend | Clé privée du compte de service (Firebase Admin SDK) |
-| `PUBLIC_FIREBASE_*` | frontend | Configuration web Firebase (apiKey, authDomain, projectId…) |
-| `STARTGG_API_TOKEN` | backend | Jeton de l'API publique start.gg |
+| Variable                | Où       | Description                                                 |
+| ----------------------- | -------- | ----------------------------------------------------------- |
+| `PORT`                  | backend  | Port de l'API (défaut `3000`)                               |
+| `FIREBASE_PROJECT_ID`   | backend  | Identifiant du projet Firebase                              |
+| `FIREBASE_CLIENT_EMAIL` | backend  | E-mail du compte de service (Firebase Admin SDK)            |
+| `FIREBASE_PRIVATE_KEY`  | backend  | Clé privée du compte de service (Firebase Admin SDK)        |
+| `PUBLIC_FIREBASE_*`     | frontend | Configuration web Firebase (apiKey, authDomain, projectId…) |
+| `STARTGG_API_TOKEN`     | backend  | Jeton de l'API publique start.gg                            |
+
+> **Les variables du frontend (`PUBLIC_*`) ne sont pas des secrets.** Elles sont envoyées au navigateur de chaque visiteur, donc visibles par tous : elles peuvent être commitées, et `frontend/.env.example` contient déjà les valeurs du projet. La sécurité repose sur les règles Firestore et sur les vérifications faites par l'API, pas sur ces clés. Les variables du **backend**, elles, sont secrètes et ne doivent jamais être commitées.
 
 ## Documentation
 
@@ -147,8 +160,8 @@ Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) _(à venir)_. En bref :
 
 ## Usage de l'IA
 
-| Outil | Usage |
-|---|---|
+| Outil                   | Usage               |
+| ----------------------- | ------------------- |
 | Claude Code (Anthropic) | Rédaction du README |
 
 Tout contenu généré est relu, testé et passe par une pull request comme le reste du code. Chaque membre du groupe doit pouvoir expliquer n'importe quelle partie du projet.
