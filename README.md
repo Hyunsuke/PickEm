@@ -149,7 +149,7 @@ Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) _(à venir)_. En bref :
 
 | Outil | Usage |
 |---|---|
-| Claude Code (Anthropic) | Rédaction du skill de projet (`.claude/skills/`), du README ; aide à la configuration du dépôt. |
+| Claude Code (Anthropic) | Rédaction du README |
 
 Tout contenu généré est relu, testé et passe par une pull request comme le reste du code. Chaque membre du groupe doit pouvoir expliquer n'importe quelle partie du projet.
 
